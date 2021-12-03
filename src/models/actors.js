@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const actorsSchema = mongoose.Schema(
     {
-        id: {
+        dctorId: {
             type: Number,
             require: true,
         },

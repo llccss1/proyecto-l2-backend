@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const directorsSchema = mongoose.Schema(
     {
-        id: {
+        directorId: {
             type: Number,
             require: true,
         },
