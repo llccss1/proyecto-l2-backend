@@ -2,10 +2,6 @@ const mongoose = require("mongoose");
 
 const actorsSchema = mongoose.Schema(
     {
-        dctorId: {
-            type: Number,
-            require: true,
-        },
         name: {
             type: String,
             require: true,
@@ -14,9 +10,17 @@ const actorsSchema = mongoose.Schema(
             type: String,
             require: true,
         },
-        descripcion: {
+        gender: {
+            type: String,
+            require: true,
+            enum: ["M","F","X"]
+        },
+        description: {
             type: String,
         },
+        picture: {
+            type: String,
+        }
     }
 );
 

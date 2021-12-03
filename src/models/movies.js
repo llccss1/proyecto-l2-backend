@@ -2,13 +2,23 @@ const mongoose = require("mongoose");
 
 const moviesSchema = mongoose.Schema(
     {
-        movieId: {
-            type: Number,
-            require: true,
-        },
         movieName: {
             type: String,
             require: true,
+        },
+        year: {
+            type: Number,
+            require: true,
+        },
+        director: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Directors",
+            require: true,
+        },
+        movieGenre: {
+            type: String,
+            require: true,
+            enum: ["Action","Suspense","Comedy","Thriller","Fantasy","None"]
         },
         sinopsis: {
             type: String,
@@ -18,7 +28,8 @@ const moviesSchema = mongoose.Schema(
             require: true,
         },
         cast: {
-            type: [String],
+            type: [mongoose.Schema.Types.ObjectId],
+            ref: "Actors",
             require: true,
         }
     }

@@ -2,10 +2,6 @@ const mongoose = require("mongoose");
 
 const directorsSchema = mongoose.Schema(
     {
-        directorId: {
-            type: Number,
-            require: true,
-        },
         name: {
             type: String,
             require: true,
@@ -15,6 +11,9 @@ const directorsSchema = mongoose.Schema(
             require: true,
         },
         descripcion: {
+            type: String,
+        },
+        picture: {
             type: String,
         },
     }

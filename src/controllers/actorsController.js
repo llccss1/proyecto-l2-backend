@@ -27,11 +27,11 @@ const getActorById = async (req, res) => {
 
         if (response) {
         res.status(200).json(
-            {
-                data: response,
-                error: false,
-            }
-        );
+                {
+                    data: response,
+                    error: false,
+                }
+            );
         } else {
             res.status(404).json(
                 {
@@ -43,17 +43,122 @@ const getActorById = async (req, res) => {
     } catch (error) {
         return res.status(500).json(
             {
-                msg: error,
+                msg: "===> "+error,
                 error: true,
             }
         );
     }
 };
 
-const deleteActors = () => console.log("delete actors");
+const addActor = async (req, res) => {
+    try {
+        if (!req.body.name) {
+            return res.status(400).json(
+                {
+                    error: true,
+                    msg: "El campo nombre es requerido. Por favor, ingrese el nombre del actor",
+                }
+            );
+        }
+        if (!req.body.lastname) {
+            return res.status(400).json(
+                {
+                    error: true,
+                    msg: "El campo apellido es requerido. Por favor, ingrese el apellido del actor",
+                }
+            );
+        }
+
+        const actor = new models.Actors(req.body);
+        await actor.save();
+        res.status(200).json(
+            {
+                data: actor,
+                error: false,
+            }
+        );
+    } catch (error) {
+        return res.status(500).json(
+            {
+                msg: "===> "+error,
+                error: true,
+            }
+        );
+    }
+};
+
+const updateActor = async (req, res) => {
+    try {
+        const actorId = req.params.id;
+    
+        const actor = await models.Actors.findByIdAndUpdate(
+            actorId,
+            req.body,
+            // el new: true, retorna el objeto ya actualizado, y no el objeto antes de actualizar
+            { new: true }
+        );
+    
+        if (actor) {
+            res.status(200).json(
+                {
+                    error: false,
+                    data: actor,
+                }
+            );
+        } else {
+            res.status(404).json(
+                {
+                    error: true,
+                    msg: "El actor no existe",
+                }
+            );
+        }
+    } catch (error) {
+        res.status(500).json(
+            {
+                error: true,
+                msg: error,
+            }
+        );
+    }
+};
+
+const deleteActor = async (req, res) => {
+    try {
+        const actorId = req.params.id;
+    
+        const response = await models.Actors.findByIdAndRemove(actorId);
+    
+        if (response) {
+            res.status(200).json(
+                {
+                    error: false,
+                    data: response,
+                    msg: `El actor con id ${actorId} fue eliminada exitosamente`,
+                }
+            );
+        } else {
+            res.status(404).json(
+                {
+                    error: true,
+                    msg: "El actor no existe",
+                }
+            );
+        }
+    } catch (error) {
+        res.status(500).json(
+            {
+                error: true,
+                msg: error,
+            }
+        );
+    }
+};
 
 module.exports = {
     getActors,
     getActorById,
-    deleteActors,
+    addActor,
+    updateActor,
+    deleteActor,
 };
