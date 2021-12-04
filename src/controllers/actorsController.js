@@ -1,4 +1,6 @@
 const models = require("../models");
+const mongoose = require("mongoose");
+const objectIdValidator = mongoose.Types.ObjectId;
 
 const getActors = async (req, res) => {
     try {
@@ -23,17 +25,27 @@ const getActors = async (req, res) => {
 const getActorById = async (req, res) => {
     try {
         const actorId = req.params.id;
+        
+        //verifico que sea un ObjectId valido
+        const isValid = objectIdValidator.isValid(actorId);
+        if (!isValid) {            
+            return res.status(400).json({
+                data: `El valor ${actorId} no es un ID válido de MongoDB`,
+                error: true,
+              });
+        }
+
         const response = await models.Actors.findById(actorId);
 
         if (response) {
-        res.status(200).json(
+        return res.status(200).json(
                 {
                     data: response,
                     error: false,
                 }
             );
         } else {
-            res.status(404).json(
+            return res.status(404).json(
                 {
                     msg: `El Actor con Id ${req.params.id} no existe`,
                     error: true,
@@ -43,7 +55,7 @@ const getActorById = async (req, res) => {
     } catch (error) {
         return res.status(500).json(
             {
-                msg: "===> "+error,
+                msg: error,
                 error: true,
             }
         );
@@ -71,7 +83,7 @@ const addActor = async (req, res) => {
 
         const actor = new models.Actors(req.body);
         await actor.save();
-        res.status(200).json(
+        return res.status(200).json(
             {
                 data: actor,
                 error: false,
@@ -99,14 +111,14 @@ const updateActor = async (req, res) => {
         );
     
         if (actor) {
-            res.status(200).json(
+            return res.status(200).json(
                 {
                     error: false,
                     data: actor,
                 }
             );
         } else {
-            res.status(404).json(
+            return res.status(404).json(
                 {
                     error: true,
                     msg: "El actor no existe",
@@ -114,7 +126,7 @@ const updateActor = async (req, res) => {
             );
         }
     } catch (error) {
-        res.status(500).json(
+        return res.status(500).json(
             {
                 error: true,
                 msg: error,
@@ -130,7 +142,7 @@ const deleteActor = async (req, res) => {
         const response = await models.Actors.findByIdAndRemove(actorId);
     
         if (response) {
-            res.status(200).json(
+            return res.status(200).json(
                 {
                     error: false,
                     data: response,
@@ -138,7 +150,7 @@ const deleteActor = async (req, res) => {
                 }
             );
         } else {
-            res.status(404).json(
+            return res.status(404).json(
                 {
                     error: true,
                     msg: "El actor no existe",
@@ -146,7 +158,7 @@ const deleteActor = async (req, res) => {
             );
         }
     } catch (error) {
-        res.status(500).json(
+        return res.status(500).json(
             {
                 error: true,
                 msg: error,
