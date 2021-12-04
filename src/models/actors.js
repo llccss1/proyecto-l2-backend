@@ -4,15 +4,15 @@ const actorsSchema = mongoose.Schema(
     {
         name: {
             type: String,
-            require: true,
+            required: true,
         },
         lastname: {
             type: String,
-            require: true,
+            required: true,
         },
         gender: {
             type: String,
-            require: true,
+            required: true,
             enum: ["M","F","X"]
         },
         description: {

@@ -4,7 +4,7 @@ const moviesSchema = mongoose.Schema(
     {
         movieName: {
             type: String,
-            require: true,
+            required: true,
         },
         year: {
             type: Number,
@@ -13,11 +13,11 @@ const moviesSchema = mongoose.Schema(
         director: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Directors",
-            require: true,
+            required: true,
         },
         movieGenre: {
             type: String,
-            require: true,
+            required: true,
             enum: ["Action","Suspense","Comedy","Thriller","Fantasy","None"]
         },
         sinopsis: {
@@ -25,12 +25,12 @@ const moviesSchema = mongoose.Schema(
         },
         poster: {
             type: String,
-            require: true,
+            required: true,
         },
         cast: {
             type: [mongoose.Schema.Types.ObjectId],
             ref: "Actors",
-            require: true,
+            required: true,
         }
     }
 );

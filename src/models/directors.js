@@ -4,11 +4,11 @@ const directorsSchema = mongoose.Schema(
     {
         name: {
             type: String,
-            require: true,
+            required: true,
         },
         lastname: {
             type: String,
-            require: true,
+            required: true,
         },
         descripcion: {
             type: String,
