@@ -24,8 +24,7 @@ const moviesSchema = mongoose.Schema(
             type: String,
         },
         poster: {
-            type: String,
-            required: true,
+            type: String,            
         },
         cast: {
             type: [mongoose.Schema.Types.ObjectId],

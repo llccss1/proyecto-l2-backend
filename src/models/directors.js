@@ -10,6 +10,11 @@ const directorsSchema = mongoose.Schema(
             type: String,
             required: true,
         },
+        gender: {
+            type: String,
+            required: true,
+            enum: ["M","F","X"]
+        },
         descripcion: {
             type: String,
         },

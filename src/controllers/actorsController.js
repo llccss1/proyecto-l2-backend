@@ -102,6 +102,15 @@ const addActor = async (req, res) => {
 const updateActor = async (req, res) => {
     try {
         const actorId = req.params.id;
+
+        //verifico que sea un ObjectId valido
+        const isValid = objectIdValidator.isValid(actorId);
+        if (!isValid) {            
+            return res.status(400).json({
+                data: `El valor ${actorId} no es un ID válido de MongoDB`,
+                error: true,
+              });
+        }
     
         const actor = await models.Actors.findByIdAndUpdate(
             actorId,
@@ -138,6 +147,15 @@ const updateActor = async (req, res) => {
 const deleteActor = async (req, res) => {
     try {
         const actorId = req.params.id;
+
+        //verifico que sea un ObjectId valido
+        const isValid = objectIdValidator.isValid(actorId);
+        if (!isValid) {            
+            return res.status(400).json({
+                data: `El valor ${actorId} no es un ID válido de MongoDB`,
+                error: true,
+              });
+        }
     
         const response = await models.Actors.findByIdAndRemove(actorId);
     
