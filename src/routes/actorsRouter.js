@@ -8,4 +8,6 @@ router.post("/", actorsController.addActor);
 router.put("/:id", actorsController.updateActor);
 router.delete("/:id", actorsController.deleteActor);
 
+router.get("/movies/:id", actorsController.getMoviesFromActor);
+
 module.exports = router;

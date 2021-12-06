@@ -1,4 +1,5 @@
 const models = require("../models");
+const validaciones = require("./validaciones");
 
 const getDirectors = async (req, res) => {
     try {
@@ -25,8 +26,7 @@ const getDirectorById = async (req, res) => {
         const directorId = req.params.id;
         
         //verifico que sea un ObjectId valido
-        const isValid = objectIdValidator.isValid(directorId);
-        if (!isValid) {            
+        if (!validaciones.isValidId(directorId)) {            
             return res.status(400).json({
                 data: `El valor ${directorId} no es un ID válido de MongoDB`,
                 error: true,
@@ -102,8 +102,7 @@ const updateDirector = async (req, res) => {
         const directorId = req.params.id;
 
         //verifico que sea un ObjectId valido
-        const isValid = objectIdValidator.isValid(directorId);
-        if (!isValid) {            
+        if (!validaciones.isValidId(directorId)) {            
             return res.status(400).json({
                 data: `El valor ${directorId} no es un ID válido de MongoDB`,
                 error: true,
@@ -147,8 +146,7 @@ const deleteDirector = async (req, res) => {
         const directorId = req.params.id;
 
         //verifico que sea un ObjectId valido
-        const isValid = objectIdValidator.isValid(directorId);
-        if (!isValid) {            
+        if (!validaciones.isValidId(directorId)) {            
             return res.status(400).json({
                 data: `El valor ${directorId} no es un ID válido de MongoDB`,
                 error: true,
@@ -183,6 +181,61 @@ const deleteDirector = async (req, res) => {
     }
 };
 
+const getMoviesFromDirector = async (req, res) => {
+    const directorId = req.params.id;
+        
+    //verifico que sea un ObjectId valido
+    if (!validaciones.isValidId(directorId)) {            
+        return res.status(400).json({
+            data: `El valor ${directorId} no es un ID válido de MongoDB`,
+            error: true,
+            });
+    }
+
+    const response = await models.Directors.findById(directorId);
+    if (!response) {
+        return res.status(404).json(
+            {
+                error: true,
+                msg: "El director no existe",
+            }
+        );
+    }
+
+    //buscar peliculas donde este el id del actor
+    const movies = await models.Movies.find();
+
+    if (movies.length === 0) {
+        return res.status(404).json(
+            {
+                error: true,
+                msg: "No hay peliculas cargadas en la base de datos",
+            }
+        );
+    }
+
+    let moviesFromDirector = [];
+    movies.forEach(movie => {        
+        if (movie.director == directorId) moviesFromDirector.push(movie);          
+    });
+
+    if (moviesFromDirector.length === 0) {
+        return res.status(404).json(
+            {
+                error: true,
+                msg: "No hay peliculas para este director",
+            }
+        );
+    } else {
+        return res.status(200).json(
+            {
+                error: false,
+                data: moviesFromDirector,
+            }
+        );
+    }
+};
+
 
 module.exports = {
     getDirectors,
@@ -190,4 +243,5 @@ module.exports = {
     addDirector,
     updateDirector,
     deleteDirector,
+    getMoviesFromDirector,
 };

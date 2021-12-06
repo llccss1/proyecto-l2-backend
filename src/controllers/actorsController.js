@@ -1,6 +1,5 @@
 const models = require("../models");
-const mongoose = require("mongoose");
-const objectIdValidator = mongoose.Types.ObjectId;
+const validaciones = require("./validaciones");
 
 const getActors = async (req, res) => {
     try {
@@ -27,8 +26,7 @@ const getActorById = async (req, res) => {
         const actorId = req.params.id;
         
         //verifico que sea un ObjectId valido
-        const isValid = objectIdValidator.isValid(actorId);
-        if (!isValid) {            
+        if (!validaciones.isValidId(actorId)) {            
             return res.status(400).json({
                 data: `El valor ${actorId} no es un ID válido de MongoDB`,
                 error: true,
@@ -104,8 +102,7 @@ const updateActor = async (req, res) => {
         const actorId = req.params.id;
 
         //verifico que sea un ObjectId valido
-        const isValid = objectIdValidator.isValid(actorId);
-        if (!isValid) {            
+        if (!validaciones.isValidId(actorId)) {            
             return res.status(400).json({
                 data: `El valor ${actorId} no es un ID válido de MongoDB`,
                 error: true,
@@ -149,8 +146,7 @@ const deleteActor = async (req, res) => {
         const actorId = req.params.id;
 
         //verifico que sea un ObjectId valido
-        const isValid = objectIdValidator.isValid(actorId);
-        if (!isValid) {            
+        if (!validaciones.isValidId(actorId)) {            
             return res.status(400).json({
                 data: `El valor ${actorId} no es un ID válido de MongoDB`,
                 error: true,
@@ -185,10 +181,70 @@ const deleteActor = async (req, res) => {
     }
 };
 
+const getMoviesFromActor = async (req, res) => {
+    const actorId = req.params.id;
+        
+    //verifico que sea un ObjectId valido
+    if (!validaciones.isValidId(actorId)) {            
+        return res.status(400).json({
+            data: `El valor ${actorId} no es un ID válido de MongoDB`,
+            error: true,
+            });
+    }
+
+    const response = await models.Actors.findById(actorId);
+    if (!response) {
+        return res.status(404).json(
+            {
+                error: true,
+                msg: "El actor no existe",
+            }
+        );
+    }
+
+    //buscar peliculas donde este el id del actor
+    const movies = await models.Movies.find();
+
+    if (movies.length === 0) {
+        return res.status(404).json(
+            {
+                error: true,
+                msg: "No hay peliculas cargadas en la base de datos",
+            }
+        );
+    }
+
+    let moviesFromActor = [];
+    movies.forEach(movie => {
+        let esta = false;
+        movie.cast.forEach(actor => {
+            if (actor == actorId) esta = true;
+        });
+        if (esta) moviesFromActor.push(movie);   
+    });
+
+    if (moviesFromActor.length === 0) {
+        return res.status(404).json(
+            {
+                error: true,
+                msg: "No hay peliculas para este actor",
+            }
+        );
+    } else {
+        return res.status(200).json(
+            {
+                error: false,
+                data: moviesFromActor,
+            }
+        );
+    }
+};
+
 module.exports = {
     getActors,
     getActorById,
     addActor,
     updateActor,
     deleteActor,
+    getMoviesFromActor, //falta testear
 };

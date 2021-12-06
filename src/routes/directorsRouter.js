@@ -8,4 +8,6 @@ router.post("/", directorsController.addDirector);
 router.put("/:id", directorsController.updateDirector);
 router.delete("/:id", directorsController.deleteDirector);
 
+router.get("/movies/:id", directorsController.getMoviesFromDirector);
+
 module.exports = router;

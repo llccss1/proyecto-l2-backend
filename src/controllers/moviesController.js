@@ -1,4 +1,5 @@
 const models = require("../models");
+const validaciones = require("./validaciones");
 
 const getMovies = async (req, res) => {
     try {
@@ -23,10 +24,8 @@ const getMovies = async (req, res) => {
 const getMovieById = async (req, res) => {
     try {
         const movieId = req.params.id;
-        
-        //verifico que sea un ObjectId valido
-        const isValid = objectIdValidator.isValid(movieId);
-        if (!isValid) {            
+
+        if (!validaciones.isValidId(movieId)) {
             return res.status(400).json({
                 data: `El valor ${movieId} no es un ID válido de MongoDB`,
                 error: true,
@@ -77,7 +76,7 @@ const addMovie = async (req, res) => {
                     msg: "El campo anio es requerido. Por favor, ingrese el anio de la pelicula",
                 }
             );
-        }
+        }        
         if (!req.body.director) {
             return res.status(400).json(
                 {
@@ -85,6 +84,12 @@ const addMovie = async (req, res) => {
                     msg: "El campo director es requerido. Por favor, ingrese el director de la pelicula",
                 }
             );
+        }
+        if (!validaciones.isValidId(req.body.director)) {
+            return res.status(400).json({
+                data: `El valor ${req.body.director} no es un ID válido de MongoDB para un director`,
+                error: true,
+              });
         }
         if (!req.body.movieGenre) {
             return res.status(400).json(
@@ -96,15 +101,29 @@ const addMovie = async (req, res) => {
         }
 
         //esto hay q arreglar para q valide los campos del array
-        /*
-        if (!req.body.cast) {
-            return res.status(400).json(
-                {
-                    error: true,
-                    msg: "El campo cast es requerido. Por favor, ingrese el cast de la pelicula",
-                }
-            );
-        }*/
+        const movieCast = req.body.cast;       
+        if (!validaciones.existInActors(movieCast)) {
+            //console.log("existInActors = "+movieCast)
+            if (!Array.isArray(movieCast) || movieCast.lenght === 0) {
+                //console.log("existInActors  2 = "+movieCast)
+                return res.status(400).json(
+                    {
+                        error: true,
+                        msg: "El campo cast es requerido. Por favor, ingrese el cast de la pelicula",
+                    }
+                );
+            } else {
+                //console.log("else");
+                let actors = validaciones.actorsNotExist(movieCast);
+                return res.status(400).json(
+                    {
+                        error: true,
+                        msg: `Los siguientes Id de actores no existen en la coleccion actores: ${actors}`,
+                    }
+                );                
+            }
+        }
+        
 
         const movie = new models.Movies(req.body);
         await movie.save();
@@ -128,9 +147,7 @@ const updateMovie = async (req, res) => {
     try {
         const movieId = req.params.id;
 
-        //verifico que sea un ObjectId valido
-        const isValid = objectIdValidator.isValid(movieId);
-        if (!isValid) {            
+        if (!validaciones.isValidId(movieId)) {
             return res.status(400).json({
                 data: `El valor ${movieId} no es un ID válido de MongoDB`,
                 error: true,
@@ -173,9 +190,7 @@ const deleteMovie = async (req, res) => {
     try {
         const movieId = req.params.id;
 
-        //verifico que sea un ObjectId valido
-        const isValid = objectIdValidator.isValid(movieId);
-        if (!isValid) {            
+        if (!validaciones.isValidId(movieId)) {
             return res.status(400).json({
                 data: `El valor ${movieId} no es un ID válido de MongoDB`,
                 error: true,
@@ -209,7 +224,6 @@ const deleteMovie = async (req, res) => {
         );
     }
 };
-
 
 module.exports = {
     getMovies,
