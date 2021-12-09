@@ -62,6 +62,17 @@ const getActorById = async (req, res) => {
 
 const addActor = async (req, res) => {
     try {
+
+        //validar que el body este cargado
+        if (!req.body.data) {
+            return res.status(400).json(
+                {
+                    error: true,
+                    msg: "El body es requerido para cargar nuevo actor",
+                }
+            );
+        }
+
         if (!req.body.name) {
             return res.status(400).json(
                 {
@@ -107,6 +118,16 @@ const updateActor = async (req, res) => {
                 data: `El valor ${actorId} no es un ID válido de MongoDB`,
                 error: true,
               });
+        }
+
+        //validar que el body este cargado
+        if (!req.body.data) {
+            return res.status(400).json(
+                {
+                    error: true,
+                    msg: "El body es requerido para modificar actor",
+                }
+            );
         }
     
         const actor = await models.Actors.findByIdAndUpdate(

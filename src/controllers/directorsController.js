@@ -62,6 +62,17 @@ const getDirectorById = async (req, res) => {
 
 const addDirector = async (req, res) => {
     try {
+
+        //validar que el body este cargado
+        if (!req.body.data) {
+            return res.status(400).json(
+                {
+                    error: true,
+                    msg: "El body es requerido para crear nuevo director",
+                }
+            );
+        }    
+
         if (!req.body.name) {
             return res.status(400).json(
                 {
@@ -108,6 +119,16 @@ const updateDirector = async (req, res) => {
                 error: true,
               });
         }
+
+        //validar que el body este cargado
+        if (!req.body.data) {
+            return res.status(400).json(
+                {
+                    error: true,
+                    msg: "El body es requerido para modificar director",
+                }
+            );
+        }    
     
         const director = await models.Directors.findByIdAndUpdate(
             directorId,

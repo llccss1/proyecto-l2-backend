@@ -10,6 +10,9 @@ const actorsSchema = mongoose.Schema(
             type: String,
             required: true,
         },
+        birthDate: {
+            type: Date,            
+        },
         gender: {
             type: String,
             required: true,

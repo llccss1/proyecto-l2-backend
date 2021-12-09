@@ -34,6 +34,8 @@ const getMovieById = async (req, res) => {
 
         const response = await models.Movies.findById(movieId);
 
+        //aca deberia agregar al cast los objetos actor, y en director el objeto director completo.
+
         if (response) {
         return res.status(200).json(
                 {
@@ -61,6 +63,18 @@ const getMovieById = async (req, res) => {
 
 const addMovie = async (req, res) => {
     try {
+
+        //validar que el body este cargado
+        if (!req.body.data) {
+            return res.status(400).json(
+                {
+                    error: true,
+                    msg: "El body es requerido para crear nueva pelicula",
+                }
+            );
+        }     
+
+
         if (!req.body.movieName) {
             return res.status(400).json(
                 {
@@ -153,6 +167,16 @@ const updateMovie = async (req, res) => {
                 error: true,
               });
         }
+
+        //validar que el body este cargado
+        if (!req.body.data) {
+            return res.status(400).json(
+                {
+                    error: true,
+                    msg: "El body es requerido para actualizar peliculas",
+                }
+            );
+        }        
     
         const movie = await models.Movies.findByIdAndUpdate(
             movieId,
