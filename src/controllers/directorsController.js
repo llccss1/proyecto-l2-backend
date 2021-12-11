@@ -39,7 +39,9 @@ const getDirectorById = async (req, res) => {
               });
         }
 
-        const response = await models.Actors.findById(directorId);
+        console.log(directorId);
+        const response = await models.Directors.findById(directorId);
+        console.log(response);
 
         if (response) {
         return res.status(200).json(
