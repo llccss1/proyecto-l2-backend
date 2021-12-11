@@ -14,7 +14,10 @@ const getDirectors = async (req, res) => {
     } catch (error) {
         return res.status(500).json(
             {
-                msg: error,
+                data: {
+                    status: '500',
+                    msg: error,
+                },
                 error: true,
             }
         ); 
@@ -28,7 +31,10 @@ const getDirectorById = async (req, res) => {
         //verifico que sea un ObjectId valido
         if (!validaciones.isValidId(directorId)) {            
             return res.status(400).json({
-                data: `El valor ${directorId} no es un ID válido de MongoDB`,
+                data: {
+                    status: '400',
+                    msg: `El valor ${directorId} no es un ID válido de MongoDB`,
+                },                
                 error: true,
               });
         }
@@ -45,7 +51,10 @@ const getDirectorById = async (req, res) => {
         } else {
             return res.status(404).json(
                 {
-                    msg: `El Director con Id ${req.params.id} no existe`,
+                    data: {
+                        status: '404',
+                        msg: `El Director con Id ${req.params.id} no existe`,
+                    },                     
                     error: true,
                 }
             );
@@ -53,7 +62,10 @@ const getDirectorById = async (req, res) => {
     } catch (error) {
         return res.status(500).json(
             {
-                msg: error,
+                data: {
+                    status: '500',
+                    msg: error,
+                },
                 error: true,
             }
         );
@@ -67,8 +79,11 @@ const addDirector = async (req, res) => {
         if (!req.body.data) {
             return res.status(400).json(
                 {
-                    error: true,
-                    msg: "El body es requerido para crear nuevo director",
+                    data: {
+                        status: '400',
+                        msg: "El body es requerido para crear nuevo director",
+                    },
+                    error: true,                    
                 }
             );
         }    
@@ -76,16 +91,33 @@ const addDirector = async (req, res) => {
         if (!req.body.name) {
             return res.status(400).json(
                 {
-                    error: true,
-                    msg: "El campo nombre es requerido. Por favor, ingrese el nombre del Director",
+                    data: {
+                        status: '400',
+                        msg: "El campo nombre es requerido. Por favor, ingrese el nombre del Director",
+                    },
+                    error: true,                    
                 }
             );
         }
         if (!req.body.lastname) {
             return res.status(400).json(
                 {
-                    error: true,
-                    msg: "El campo apellido es requerido. Por favor, ingrese el apellido del director",
+                    data: {
+                        status: '400',
+                        msg: "El campo apellido es requerido. Por favor, ingrese el apellido del director",
+                    },
+                    error: true,                    
+                }
+            );
+        }
+        if (!req.body.description) {
+            return res.status(400).json(
+                {
+                    data: {
+                        status: '400',
+                        msg: "El campo descripcion es requerido. Por favor, ingrese una descripcion del director",
+                    },
+                    error: true,                    
                 }
             );
         }
@@ -101,7 +133,10 @@ const addDirector = async (req, res) => {
     } catch (error) {
         return res.status(500).json(
             {
-                msg: "===> "+error,
+                data: {
+                    status: '500',
+                    msg: error,
+                },
                 error: true,
             }
         );
@@ -115,7 +150,10 @@ const updateDirector = async (req, res) => {
         //verifico que sea un ObjectId valido
         if (!validaciones.isValidId(directorId)) {            
             return res.status(400).json({
-                data: `El valor ${directorId} no es un ID válido de MongoDB`,
+                data: {
+                    status: '400',
+                    msg: `El valor ${directorId} no es un ID válido de MongoDB`,
+                },                
                 error: true,
               });
         }
@@ -124,8 +162,11 @@ const updateDirector = async (req, res) => {
         if (!req.body.data) {
             return res.status(400).json(
                 {
-                    error: true,
-                    msg: "El body es requerido para modificar director",
+                    data: {
+                        status: '400',
+                        msg: "El body es requerido para modificar director",
+                    }, 
+                    error: true,                    
                 }
             );
         }    
@@ -140,23 +181,29 @@ const updateDirector = async (req, res) => {
         if (director) {
             return res.status(200).json(
                 {
-                    error: false,
-                    data: actor,
+                    data: director,
+                    error: false,                    
                 }
             );
         } else {
             return res.status(404).json(
                 {
-                    error: true,
-                    msg: "El director no existe",
+                    data: {
+                        status: '404',
+                        msg: "El director no existe",
+                    }, 
+                    error: true,                    
                 }
             );
         }
     } catch (error) {
         return res.status(500).json(
             {
-                error: true,
-                msg: error,
+                data: {
+                    status: '500',
+                    msg: error,
+                }, 
+                error: true,                
             }
         );
     }
@@ -169,7 +216,10 @@ const deleteDirector = async (req, res) => {
         //verifico que sea un ObjectId valido
         if (!validaciones.isValidId(directorId)) {            
             return res.status(400).json({
-                data: `El valor ${directorId} no es un ID válido de MongoDB`,
+                data: {
+                    status: '400',
+                    msg: `El valor ${directorId} no es un ID válido de MongoDB`,
+                },                
                 error: true,
               });
         }
@@ -179,24 +229,30 @@ const deleteDirector = async (req, res) => {
         if (response) {
             return res.status(200).json(
                 {
-                    error: false,
                     data: response,
-                    msg: `El director con id ${directorId} fue eliminada exitosamente`,
+                    error: false,                    
+                    //msg: `El director con id ${directorId} fue eliminada exitosamente`,
                 }
             );
         } else {
             return res.status(404).json(
                 {
-                    error: true,
-                    msg: "El director no existe",
+                    data: {
+                        status: '404',
+                        msg: "El director no existe",
+                    }, 
+                    error: true,                    
                 }
             );
         }
     } catch (error) {
         return res.status(500).json(
             {
-                error: true,
-                msg: error,
+                data: {
+                    status: '500',
+                    msg: error,
+                },
+                error: true,                
             }
         );
     }
@@ -208,7 +264,10 @@ const getMoviesFromDirector = async (req, res) => {
     //verifico que sea un ObjectId valido
     if (!validaciones.isValidId(directorId)) {            
         return res.status(400).json({
-            data: `El valor ${directorId} no es un ID válido de MongoDB`,
+            data: {
+                status: '404',
+                msg: `El valor ${directorId} no es un ID válido de MongoDB`,
+            },            
             error: true,
             });
     }
@@ -217,8 +276,11 @@ const getMoviesFromDirector = async (req, res) => {
     if (!response) {
         return res.status(404).json(
             {
-                error: true,
-                msg: "El director no existe",
+                data: {
+                    status: '404',
+                    msg: "El director no existe",
+                },
+                error: true,                
             }
         );
     }
@@ -229,8 +291,11 @@ const getMoviesFromDirector = async (req, res) => {
     if (movies.length === 0) {
         return res.status(404).json(
             {
-                error: true,
-                msg: "No hay peliculas cargadas en la base de datos",
+                data: {
+                    status: '404',
+                    msg: "No hay peliculas cargadas en la base de datos",
+                },
+                error: true,                
             }
         );
     }
@@ -243,15 +308,18 @@ const getMoviesFromDirector = async (req, res) => {
     if (moviesFromDirector.length === 0) {
         return res.status(404).json(
             {
-                error: true,
-                msg: "No hay peliculas para este director",
+                data: {
+                    status: '404',
+                    msg: "No hay peliculas para este director",
+                },
+                error: true,                
             }
         );
     } else {
         return res.status(200).json(
             {
-                error: false,
                 data: moviesFromDirector,
+                error: false,                
             }
         );
     }

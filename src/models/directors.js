@@ -14,8 +14,7 @@ const directorsSchema = mongoose.Schema(
             type: Date,            
         },
         gender: {
-            type: String,
-            required: true,
+            type: String,            
             enum: ["M","F","X"]
         },
         descripcion: {
@@ -24,6 +23,9 @@ const directorsSchema = mongoose.Schema(
         picture: {
             type: String,
         },
+        favourite: {
+            type: Boolean,
+        }
     }
 );
 

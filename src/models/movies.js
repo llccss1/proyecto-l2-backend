@@ -2,18 +2,17 @@ const mongoose = require("mongoose");
 
 const moviesSchema = mongoose.Schema(
     {
-        movieName: {
+        movieTitle: {
             type: String,
             required: true,
         },
-        year: {
+        yearOfRelease: {
             type: Number,
             require: true,
         },
         director: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "Directors",
-            required: true,
+            ref: "Directors",            
         },
         movieGenre: {
             type: String,
@@ -22,15 +21,17 @@ const moviesSchema = mongoose.Schema(
         },
         sinopsis: {
             type: String,
+            required: true,
         },
         poster: {
-            type: String,
-            required: true,
+            type: String,            
         },
         cast: {
             type: [mongoose.Schema.Types.ObjectId],
-            ref: "Actors",
-            required: true,
+            ref: "Actors",            
+        },
+        favourite: {
+            type: Boolean,
         }
     }
 );

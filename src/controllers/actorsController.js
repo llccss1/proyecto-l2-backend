@@ -13,8 +13,11 @@ const getActors = async (req, res) => {
         );
     } catch (error) {
         return res.status(500).json(
-            {
-                msg: error,
+            {                
+                data: {
+                    status: '500',
+                    msg: error,
+                },
                 error: true,
             }
         ); 
@@ -27,8 +30,11 @@ const getActorById = async (req, res) => {
         
         //verifico que sea un ObjectId valido
         if (!validaciones.isValidId(actorId)) {            
-            return res.status(400).json({
-                data: `El valor ${actorId} no es un ID válido de MongoDB`,
+            return res.status(400).json({                
+                data: {
+                    status: '400',
+                    msg: `El valor ${actorId} no es un ID válido de MongoDB`,
+                },
                 error: true,
               });
         }
@@ -44,8 +50,11 @@ const getActorById = async (req, res) => {
             );
         } else {
             return res.status(404).json(
-                {
-                    msg: `El Actor con Id ${req.params.id} no existe`,
+                {                    
+                    data: {
+                        status: '404',
+                        msg: `El Actor con Id ${req.params.id} no existe`,
+                    },
                     error: true,
                 }
             );
@@ -53,7 +62,10 @@ const getActorById = async (req, res) => {
     } catch (error) {
         return res.status(500).json(
             {
-                msg: error,
+                data: {
+                    status: '500',
+                    msg: error,
+                },
                 error: true,
             }
         );
@@ -67,8 +79,11 @@ const addActor = async (req, res) => {
         if (!req.body.data) {
             return res.status(400).json(
                 {
-                    error: true,
-                    msg: "El body es requerido para cargar nuevo actor",
+                    data: {
+                        status: '400',
+                        msg: "El body es requerido para cargar nuevo actor",
+                    },
+                    error: true,                    
                 }
             );
         }
@@ -76,16 +91,33 @@ const addActor = async (req, res) => {
         if (!req.body.name) {
             return res.status(400).json(
                 {
-                    error: true,
-                    msg: "El campo nombre es requerido. Por favor, ingrese el nombre del actor",
+                    data: {
+                        status: '400',
+                        msg: "El campo nombre es requerido. Por favor, ingrese el nombre del actor",
+                    },                    
+                    error: true,                    
                 }
             );
         }
         if (!req.body.lastname) {
             return res.status(400).json(
                 {
-                    error: true,
-                    msg: "El campo apellido es requerido. Por favor, ingrese el apellido del actor",
+                    data: {
+                        status: '400',
+                        msg: "El campo apellido es requerido. Por favor, ingrese el apellido del actor",
+                    },                     
+                    error: true,                    
+                }
+            );
+        }
+        if (!req.body.description) {
+            return res.status(400).json(
+                {
+                    data: {
+                        status: '400',
+                        msg: "El campo descripcion es requerido. Por favor, ingrese una descripcion del actor",
+                    },                      
+                    error: true,                    
                 }
             );
         }
@@ -101,7 +133,10 @@ const addActor = async (req, res) => {
     } catch (error) {
         return res.status(500).json(
             {
-                msg: "===> "+error,
+                data: {
+                    status: '500',
+                    msg: error,
+                },                 
                 error: true,
             }
         );
@@ -115,7 +150,10 @@ const updateActor = async (req, res) => {
         //verifico que sea un ObjectId valido
         if (!validaciones.isValidId(actorId)) {            
             return res.status(400).json({
-                data: `El valor ${actorId} no es un ID válido de MongoDB`,
+                data: {
+                    status: '400',
+                    msg: `El valor ${actorId} no es un ID válido de MongoDB`,
+                },                
                 error: true,
               });
         }
@@ -124,8 +162,11 @@ const updateActor = async (req, res) => {
         if (!req.body.data) {
             return res.status(400).json(
                 {
-                    error: true,
-                    msg: "El body es requerido para modificar actor",
+                    data: {
+                        status: '400',
+                        msg: "El body es requerido para modificar actor",
+                    },                    
+                    error: true,                    
                 }
             );
         }
@@ -140,23 +181,29 @@ const updateActor = async (req, res) => {
         if (actor) {
             return res.status(200).json(
                 {
-                    error: false,
                     data: actor,
+                    error: false,                    
                 }
             );
         } else {
             return res.status(404).json(
                 {
-                    error: true,
-                    msg: "El actor no existe",
+                    data: {
+                        status: '404',
+                        msg: "El actor no existe",
+                    },                    
+                    error: true,                    
                 }
             );
         }
     } catch (error) {
         return res.status(500).json(
             {
-                error: true,
-                msg: error,
+                data: {
+                    status: '500',
+                    msg: error,
+                },
+                error: true,                
             }
         );
     }
@@ -169,7 +216,10 @@ const deleteActor = async (req, res) => {
         //verifico que sea un ObjectId valido
         if (!validaciones.isValidId(actorId)) {            
             return res.status(400).json({
-                data: `El valor ${actorId} no es un ID válido de MongoDB`,
+                data: {
+                    status: '400',
+                    msg: `El valor ${actorId} no es un ID válido de MongoDB`,
+                },                
                 error: true,
               });
         }
@@ -179,24 +229,30 @@ const deleteActor = async (req, res) => {
         if (response) {
             return res.status(200).json(
                 {
-                    error: false,
                     data: response,
-                    msg: `El actor con id ${actorId} fue eliminada exitosamente`,
+                    error: false,                    
+                    //msg: `El actor con id ${actorId} fue eliminada exitosamente`,
                 }
             );
         } else {
             return res.status(404).json(
                 {
-                    error: true,
-                    msg: "El actor no existe",
+                    data: {
+                        status: '404',
+                        msg: "El actor no existe",
+                    },                    
+                    error: true,                    
                 }
             );
         }
     } catch (error) {
         return res.status(500).json(
             {
-                error: true,
-                msg: error,
+                data: {
+                    status: '500',
+                    msg: error,
+                },                 
+                error: true,                
             }
         );
     }
@@ -208,7 +264,10 @@ const getMoviesFromActor = async (req, res) => {
     //verifico que sea un ObjectId valido
     if (!validaciones.isValidId(actorId)) {            
         return res.status(400).json({
-            data: `El valor ${actorId} no es un ID válido de MongoDB`,
+            data: {
+                status: '400',
+                msg: `El valor ${actorId} no es un ID válido de MongoDB`,
+            },             
             error: true,
             });
     }
@@ -217,8 +276,11 @@ const getMoviesFromActor = async (req, res) => {
     if (!response) {
         return res.status(404).json(
             {
-                error: true,
-                msg: "El actor no existe",
+                data: {
+                    status: '404',
+                    msg: "El actor no existe",
+                },                 
+                error: true,                
             }
         );
     }
@@ -229,8 +291,11 @@ const getMoviesFromActor = async (req, res) => {
     if (movies.length === 0) {
         return res.status(404).json(
             {
-                error: true,
-                msg: "No hay peliculas cargadas en la base de datos",
+                data: {
+                    status: '404',
+                    msg: "No hay peliculas cargadas en la base de datos",
+                },                 
+                error: true,                
             }
         );
     }
@@ -247,15 +312,18 @@ const getMoviesFromActor = async (req, res) => {
     if (moviesFromActor.length === 0) {
         return res.status(404).json(
             {
-                error: true,
-                msg: "No hay peliculas para este actor",
+                data: {
+                    status: '404',
+                    msg: "No hay peliculas para este actor",
+                },                
+                error: true,                
             }
         );
     } else {
         return res.status(200).json(
             {
-                error: false,
                 data: moviesFromActor,
+                error: false,                
             }
         );
     }

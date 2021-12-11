@@ -14,7 +14,10 @@ const getMovies = async (req, res) => {
     } catch (error) {
         return res.status(500).json(
             {
-                msg: error,
+                data: {
+                    status: '500',
+                    msg: error
+                },
                 error: true,
             }
         ); 
@@ -27,7 +30,11 @@ const getMovieById = async (req, res) => {
 
         if (!validaciones.isValidId(movieId)) {
             return res.status(400).json({
-                data: `El valor ${movieId} no es un ID válido de MongoDB`,
+
+                data: {
+                    status: '400',
+                    msg: `El valor ${movieId} no es un ID válido de MongoDB`,
+                },                
                 error: true,
               });
         }
@@ -45,8 +52,11 @@ const getMovieById = async (req, res) => {
             );
         } else {
             return res.status(404).json(
-                {
-                    msg: `La Película con Id ${req.params.id} no existe`,
+                {                    
+                    data: {
+                        status: '404',
+                        msg: `La Película con Id ${req.params.id} no existe`,
+                    },
                     error: true,
                 }
             );
@@ -54,7 +64,10 @@ const getMovieById = async (req, res) => {
     } catch (error) {
         return res.status(500).json(
             {
-                msg: error,
+                data: {
+                    status: '500',
+                    msg: error,
+                },
                 error: true,
             }
         );
@@ -67,77 +80,113 @@ const addMovie = async (req, res) => {
         //validar que el body este cargado
         if (!req.body.data) {
             return res.status(400).json(
-                {
+                {                    
+                    data: {
+                        status: '400',
+                        msg: "El body es requerido para crear nueva pelicula",
+                    },
                     error: true,
-                    msg: "El body es requerido para crear nueva pelicula",
                 }
             );
-        }     
+        } 
 
-
-        if (!req.body.movieName) {
+        if (!req.body.movieTitle) {
             return res.status(400).json(
                 {
-                    error: true,
-                    msg: "El campo nombre es requerido. Por favor, ingrese el nombre de la película",
+                    data: {
+                        status: '400',
+                        msg: "El campo nombre es requerido. Por favor, ingrese el nombre de la película",
+                    },
+                    error: true,                    
                 }
             );
         }
-        if (!req.body.year) {
+        if (!req.body.yearOfRelease) {
             return res.status(400).json(
                 {
-                    error: true,
-                    msg: "El campo anio es requerido. Por favor, ingrese el anio de la pelicula",
+                    data: {
+                        status: '400',
+                        msg: "El campo año es requerido. Por favor, ingrese el año de la pelicula",
+                    },
+                    error: true,                    
                 }
             );
-        }        
+        } 
+        /*       
         if (!req.body.director) {
             return res.status(400).json(
                 {
-                    error: true,
-                    msg: "El campo director es requerido. Por favor, ingrese el director de la pelicula",
+                    data: {
+                        status: '400',
+                        msg: "El campo director es requerido. Por favor, ingrese el director de la pelicula",
+                    },
+                    error: true,                    
                 }
             );
-        }
-        if (!validaciones.isValidId(req.body.director)) {
+        }*/
+        if (req.body.director && !validaciones.isValidId(req.body.director)) {
             return res.status(400).json({
-                data: `El valor ${req.body.director} no es un ID válido de MongoDB para un director`,
+                data: {
+                    status: '400',
+                    msg: `El valor ${req.body.director} no es un ID válido de MongoDB para un director`,
+                },
                 error: true,
               });
         }
         if (!req.body.movieGenre) {
             return res.status(400).json(
                 {
-                    error: true,
-                    msg: "El campo genero es requerido. Por favor, ingrese el genero de la pelicula",
+                    data: {
+                        status: '400',
+                        msg: "El campo genero es requerido. Por favor, ingrese el genero de la pelicula",
+                    },
+                    error: true,                    
+                }
+            );
+        }
+        if (!req.body.sinopsis) {
+            return res.status(400).json(
+                {
+                    data: {
+                        status: '400',
+                        msg: "El campo sinopsis es requerido. Por favor, ingrese una sinopsis de la pelicula",
+                    },
+                    error: true,                    
                 }
             );
         }
 
         //esto hay q arreglar para q valide los campos del array
         const movieCast = req.body.cast;       
-        if (!validaciones.existInActors(movieCast)) {
-            //console.log("existInActors = "+movieCast)
-            if (!Array.isArray(movieCast) || movieCast.lenght === 0) {
-                //console.log("existInActors  2 = "+movieCast)
-                return res.status(400).json(
-                    {
-                        error: true,
-                        msg: "El campo cast es requerido. Por favor, ingrese el cast de la pelicula",
-                    }
-                );
-            } else {
-                //console.log("else");
-                let actors = validaciones.actorsNotExist(movieCast);
-                return res.status(400).json(
-                    {
-                        error: true,
-                        msg: `Los siguientes Id de actores no existen en la coleccion actores: ${actors}`,
-                    }
-                );                
+        if (movieCast.lenght!==0) {
+            if (!validaciones.existInActors(movieCast)) {
+                //console.log("existInActors = "+movieCast)
+                if (!Array.isArray(movieCast) || movieCast.lenght === 0) {
+                    //console.log("existInActors  2 = "+movieCast)
+                    return res.status(400).json(
+                        {
+                            data: {
+                                status: '400',
+                                msg: "El campo cast es requerido. Por favor, ingrese el cast de la pelicula",
+                            },
+                            error: true,                        
+                        }
+                    );
+                } else {
+                    //console.log("else");
+                    let actors = validaciones.actorsNotExist(movieCast);
+                    return res.status(400).json(
+                        {
+                            data: {
+                                status: '400',
+                                msg: `Los siguientes Id de actores no existen en la coleccion actores: ${actors}`,
+                            },
+                            error: true,                        
+                        }
+                    );                
+                }
             }
-        }
-        
+        }        
 
         const movie = new models.Movies(req.body);
         await movie.save();
@@ -150,7 +199,10 @@ const addMovie = async (req, res) => {
     } catch (error) {
         return res.status(500).json(
             {
-                msg: "===> "+error,
+                data: {
+                    status: '500',
+                    msg: error,
+                },
                 error: true,
             }
         );
@@ -163,7 +215,10 @@ const updateMovie = async (req, res) => {
 
         if (!validaciones.isValidId(movieId)) {
             return res.status(400).json({
-                data: `El valor ${movieId} no es un ID válido de MongoDB`,
+                data: {
+                    status: '400',
+                    msg: `El valor ${movieId} no es un ID válido de MongoDB`,
+                },
                 error: true,
               });
         }
@@ -172,8 +227,12 @@ const updateMovie = async (req, res) => {
         if (!req.body.data) {
             return res.status(400).json(
                 {
+                    data: {
+                        status: '400',
+                        msg: "El body es requerido para actualizar peliculas",
+                    },
                     error: true,
-                    msg: "El body es requerido para actualizar peliculas",
+                    
                 }
             );
         }        
@@ -188,23 +247,29 @@ const updateMovie = async (req, res) => {
         if (movie) {
             return res.status(200).json(
                 {
-                    error: false,
                     data: movie,
+                    error: false,
                 }
             );
         } else {
             return res.status(404).json(
                 {
-                    error: true,
-                    msg: "La película no existe",
+                    data: {
+                        status: '404',
+                        msg: "La película no existe",
+                    },
+                    error: true,                   
                 }
             );
         }
     } catch (error) {
         return res.status(500).json(
             {
-                error: true,
-                msg: error,
+                data: {
+                    status: '500',
+                    msg: error,
+                },
+                error: true,                
             }
         );
     }
@@ -216,7 +281,10 @@ const deleteMovie = async (req, res) => {
 
         if (!validaciones.isValidId(movieId)) {
             return res.status(400).json({
-                data: `El valor ${movieId} no es un ID válido de MongoDB`,
+                data: {
+                    status: '400',
+                    data: `El valor ${movieId} no es un ID válido de MongoDB`,
+                },                
                 error: true,
               });
         }
@@ -225,25 +293,31 @@ const deleteMovie = async (req, res) => {
     
         if (response) {
             return res.status(200).json(
-                {
-                    error: false,
+                {                    
                     data: response,
-                    msg: `La película con id ${movieId} fue eliminada exitosamente`,
+                    error: false,
                 }
             );
         } else {
             return res.status(404).json(
                 {
+                    data: {
+                        status: '404',
+                        msg: `La película con ID ${movieId} no existe`,
+                    },
                     error: true,
-                    msg: "La película no existe",
+                    
                 }
             );
         }
     } catch (error) {
         return res.status(500).json(
             {
-                error: true,
-                msg: error,
+                data: {
+                    status: '500',
+                    msg: error,
+                },
+                error: true,                
             }
         );
     }
@@ -254,5 +328,5 @@ module.exports = {
     getMovieById,
     addMovie,
     updateMovie,
-    deleteMovie,
+    deleteMovie,    
 };

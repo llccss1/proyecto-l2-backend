@@ -14,15 +14,18 @@ const actorsSchema = mongoose.Schema(
             type: Date,            
         },
         gender: {
-            type: String,
-            required: true,
+            type: String,            
             enum: ["M","F","X"]
         },
         description: {
             type: String,
+            required: true,
         },
         picture: {
             type: String,
+        },
+        favourite: {
+            type: Boolean,
         }
     }
 );
