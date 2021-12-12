@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const actorsController = require("../controllers/actorsController");
 
+router.get("/fav/", actorsController.getFavouritesActors);
 router.get("/", actorsController.getActors);
 router.get("/:id", actorsController.getActorById);
 router.post("/", actorsController.addActor);

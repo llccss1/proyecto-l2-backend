@@ -320,10 +320,84 @@ const deleteMovie = async (req, res) => {
     }
 };
 
+const getFavouritesMovies = async (req, res) => {
+    try {
+        const response = await models.Movies.find({
+            favourite: true,
+        });
+        
+        return res.status(200).json(
+            {
+                data: response,
+                error: false,
+            }
+        );
+    } catch (error) {
+        return res.status(500).json(
+            {
+                data: {
+                    status: '500',
+                    msg: error
+                },
+                error: true,
+            }
+        ); 
+    }
+};
+
+const getSearchMovies = async (req, res) => {
+    try {
+        const searchText = req.params.searchText.trim();
+        
+        if (!searchText) {
+            return res.status(400).json(
+                {
+                    data: {
+                        status: '400',
+                        msg: "Ingrese una palabra a buscar"
+                    },
+                    error: false,
+                }
+            );
+        }
+        const response = await models.Movies.find({
+            movieTitle: { $regex: searchText }            
+        });
+
+        /* const response = await models.Movies.find({
+            movieTitle: new RegExp('^'+searchText+'$', "i")}, (err, doc) => {
+            if (err) {
+                console.log(err);
+            } else {
+                console.log(doc);
+            }
+          }); */
+        
+        return res.status(200).json(
+            {
+                data: response,
+                error: false,
+            }
+        );
+    } catch (error) {
+        return res.status(500).json(
+            {
+                data: {
+                    status: '500',
+                    msg: error
+                },
+                error: true,
+            }
+        ); 
+    }
+};
+
 module.exports = {
     getMovies,
     getMovieById,
     addMovie,
     updateMovie,
-    deleteMovie,    
+    deleteMovie, 
+    getFavouritesMovies,   
+    getSearchMovies,
 };

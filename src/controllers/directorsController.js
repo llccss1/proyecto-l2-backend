@@ -325,6 +325,31 @@ const getMoviesFromDirector = async (req, res) => {
     }
 };
 
+const getFavouritesDirectors = async (req, res) => {
+    try {
+        const response = await models.Directors.find({
+            favourite: true,
+        });
+        
+        return res.status(200).json(
+            {
+                data: response,
+                error: false,
+            }
+        );
+    } catch (error) {
+        return res.status(500).json(
+            {
+                data: {
+                    status: '500',
+                    msg: error
+                },
+                error: true,
+            }
+        ); 
+    }
+};
+
 
 module.exports = {
     getDirectors,
@@ -333,4 +358,5 @@ module.exports = {
     updateDirector,
     deleteDirector,
     getMoviesFromDirector,
+    getFavouritesDirectors,
 };

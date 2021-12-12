@@ -329,6 +329,31 @@ const getMoviesFromActor = async (req, res) => {
     }
 };
 
+const getFavouritesActors = async (req, res) => {
+    try {
+        const response = await models.Actors.find({
+            favourite: true,
+        });
+        
+        return res.status(200).json(
+            {
+                data: response,
+                error: false,
+            }
+        );
+    } catch (error) {
+        return res.status(500).json(
+            {
+                data: {
+                    status: '500',
+                    msg: error
+                },
+                error: true,
+            }
+        ); 
+    }
+};
+
 module.exports = {
     getActors,
     getActorById,
@@ -336,4 +361,5 @@ module.exports = {
     updateActor,
     deleteActor,
     getMoviesFromActor, //falta testear
+    getFavouritesActors,
 };
