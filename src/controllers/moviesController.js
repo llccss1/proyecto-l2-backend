@@ -159,10 +159,8 @@ const addMovie = async (req, res) => {
         //esto hay q arreglar para q valide los campos del array
         const movieCast = req.body.cast;       
         if (movieCast.lenght!==0) {
-            if (!validaciones.existInActors(movieCast)) {
-                //console.log("existInActors = "+movieCast)
-                if (!Array.isArray(movieCast) || movieCast.lenght === 0) {
-                    //console.log("existInActors  2 = "+movieCast)
+            if (!validaciones.existInActors(movieCast)) {                
+                if (!Array.isArray(movieCast) || movieCast.lenght === 0) {                    
                     return res.status(400).json(
                         {
                             data: {
@@ -172,8 +170,7 @@ const addMovie = async (req, res) => {
                             error: true,                        
                         }
                     );
-                } else {
-                    //console.log("else");
+                } else {                    
                     let actors = validaciones.actorsNotExist(movieCast);
                     return res.status(400).json(
                         {
