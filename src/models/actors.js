@@ -26,6 +26,9 @@ const actorsSchema = mongoose.Schema(
         },
         favourite: {
             type: Boolean,
+        },
+        urlImdb: {
+            type: String,
         }
     }
 );

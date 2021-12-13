@@ -25,6 +25,9 @@ const directorsSchema = mongoose.Schema(
         },
         favourite: {
             type: Boolean,
+        },
+        urlImdb: {
+            type: String,
         }
     }
 );
