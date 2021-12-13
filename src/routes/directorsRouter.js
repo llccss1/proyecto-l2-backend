@@ -3,6 +3,7 @@ const router = express.Router();
 const directorsController = require("../controllers/directorsController");
 
 router.get("/fav/", directorsController.getFavouritesDirectors);
+router.get("/search/:textSearch", actorsController.getSearchDirectors);
 router.get("/", directorsController.getDirectors);
 router.get("/:id", directorsController.getDirectorById);
 router.post("/", directorsController.addDirector);

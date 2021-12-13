@@ -354,6 +354,53 @@ const getFavouritesActors = async (req, res) => {
     }
 };
 
+const getSearchActors = async (req, res) => {
+    try {
+        const searchText = req.params.searchText.trim();
+        
+        if (!searchText) {
+            return res.status(400).json(
+                {
+                    data: {
+                        status: '400',
+                        msg: "Ingrese una palabra a buscar"
+                    },
+                    error: false,
+                }
+            );
+        }
+        const response = await models.Actors.find({
+            name: { $regex: searchText }            
+        });
+
+        /* const response = await models.Movies.find({
+            movieTitle: new RegExp('^'+searchText+'$', "i")}, (err, doc) => {
+            if (err) {
+                console.log(err);
+            } else {
+                console.log(doc);
+            }
+          }); */
+        
+        return res.status(200).json(
+            {
+                data: response,
+                error: false,
+            }
+        );
+    } catch (error) {
+        return res.status(500).json(
+            {
+                data: {
+                    status: '500',
+                    msg: error
+                },
+                error: true,
+            }
+        ); 
+    }
+};
+
 module.exports = {
     getActors,
     getActorById,
@@ -362,4 +409,5 @@ module.exports = {
     deleteActor,
     getMoviesFromActor, //falta testear
     getFavouritesActors,
+    getSearchActors,
 };

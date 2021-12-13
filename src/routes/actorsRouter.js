@@ -3,6 +3,7 @@ const router = express.Router();
 const actorsController = require("../controllers/actorsController");
 
 router.get("/fav/", actorsController.getFavouritesActors);
+router.get("/search/:textSearch", actorsController.getSearchActors);
 router.get("/", actorsController.getActors);
 router.get("/:id", actorsController.getActorById);
 router.post("/", actorsController.addActor);
