@@ -33,14 +33,13 @@ const moviesSchema = mongoose.Schema(
         favourite: {
             type: Boolean,
         },        
-        urls: {
-            imdb: {
-                type: String,
-            },
-            yts: {
-                type: String,
-            }
+        urlImdb: {
+            type: String,
+        },
+        urlYts: {
+            type: String,
         }
+        
     }
 );
 
