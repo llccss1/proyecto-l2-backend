@@ -17,8 +17,9 @@ const directorsSchema = mongoose.Schema(
             type: String,            
             enum: ["M","F","X"]
         },
-        descripcion: {
+        description: {
             type: String,
+            required: true,
         },
         picture: {
             type: String,

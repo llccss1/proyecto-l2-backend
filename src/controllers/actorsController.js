@@ -170,6 +170,40 @@ const updateActor = async (req, res) => {
                 }
             );
         }
+
+        if (!req.body.name) {
+            return res.status(400).json(
+                {
+                    data: {
+                        status: '400',
+                        msg: "El campo nombre es requerido. Por favor, ingrese el nombre del actor",
+                    },                    
+                    error: true,                    
+                }
+            );
+        }
+        if (!req.body.lastname) {
+            return res.status(400).json(
+                {
+                    data: {
+                        status: '400',
+                        msg: "El campo apellido es requerido. Por favor, ingrese el apellido del actor",
+                    },                     
+                    error: true,                    
+                }
+            );
+        }
+        if (!req.body.description) {
+            return res.status(400).json(
+                {
+                    data: {
+                        status: '400',
+                        msg: "El campo descripcion es requerido. Por favor, ingrese una descripcion del actor",
+                    },                      
+                    error: true,                    
+                }
+            );
+        }
     
         const actor = await models.Actors.findByIdAndUpdate(
             actorId,

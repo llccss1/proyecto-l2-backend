@@ -158,6 +158,7 @@ const updateDirector = async (req, res) => {
               });
         }
 
+        
         //validar que el body este cargado
         if (!req.body) {
             return res.status(400).json(
@@ -170,7 +171,43 @@ const updateDirector = async (req, res) => {
                 }
             );
         }    
-    
+
+        if (!req.body.name) {
+            return res.status(400).json(
+                {
+                    data: {
+                        status: '400',
+                        msg: "El campo nombre es requerido. Por favor, ingrese el nombre del Director",
+                    },
+                    error: true,                    
+                }
+            );
+        }
+        if (!req.body.lastname) {
+            return res.status(400).json(
+                {
+                    data: {
+                        status: '400',
+                        msg: "El campo apellido es requerido. Por favor, ingrese el apellido del director",
+                    },
+                    error: true,                    
+                }
+            );
+        }
+        
+        if (!req.body.description) {
+            return res.status(400).json(
+                {
+                    data: {
+                        status: '400',
+                        msg: "El campo descripcion es requerido. Por favor, ingrese una descripcion del director",
+                    },
+                    error: true,                    
+                }
+            );
+        }
+        
+        
         const director = await models.Directors.findByIdAndUpdate(
             directorId,
             req.body,
@@ -227,6 +264,7 @@ const deleteDirector = async (req, res) => {
         const response = await models.Directors.findByIdAndRemove(directorId);
     
         if (response) {
+            //doDeleteFromMovies(directorId);
             return res.status(200).json(
                 {
                     data: response,
@@ -396,6 +434,8 @@ const getSearchDirectors = async (req, res) => {
         ); 
     }
 };
+
+
 
 
 module.exports = {
