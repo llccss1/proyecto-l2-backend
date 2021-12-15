@@ -29,6 +29,7 @@ const moviesSchema = mongoose.Schema(
         cast: {
             type: [mongoose.Schema.Types.ObjectId],
             ref: "Actors",            
+            required: true,
         },
         favourite: {
             type: Boolean,
