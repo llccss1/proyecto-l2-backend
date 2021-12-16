@@ -264,7 +264,9 @@ const deleteDirector = async (req, res) => {
         const response = await models.Directors.findByIdAndRemove(directorId);
     
         if (response) {
-            //doDeleteFromMovies(directorId);
+            //antes de retornar, elimino el director de las peliculas
+            removeDirectorFromMovies(directorId);
+
             return res.status(200).json(
                 {
                     data: response,
@@ -323,26 +325,8 @@ const getMoviesFromDirector = async (req, res) => {
         );
     }
 
-    //buscar peliculas donde este el id del actor
-    const movies = await models.Movies.find();
-
-    if (movies.length === 0) {
-        return res.status(404).json(
-            {
-                data: {
-                    status: '404',
-                    msg: "No hay peliculas cargadas en la base de datos",
-                },
-                error: true,                
-            }
-        );
-    }
-
-    let moviesFromDirector = [];
-    movies.forEach(movie => {        
-        if (movie.director == directorId) moviesFromDirector.push(movie);          
-    });
-
+    //buscar peliculas donde este el id del director
+    const moviesFromDirector = await models.Movies.find({ director: directorId });
     if (moviesFromDirector.length === 0) {
         return res.status(404).json(
             {
@@ -404,17 +388,8 @@ const getSearchDirectors = async (req, res) => {
             );
         }
         const response = await models.Directors.find({
-            name: { $regex: searchText }            
-        });
-
-        /* const response = await models.Movies.find({
-            movieTitle: new RegExp('^'+searchText+'$', "i")}, (err, doc) => {
-            if (err) {
-                console.log(err);
-            } else {
-                console.log(doc);
-            }
-          }); */
+             $or: [ { name: { $regex: searchText } }, { lastname: { $regex: searchText } } ]        
+        });        
         
         return res.status(200).json(
             {
@@ -435,7 +410,14 @@ const getSearchDirectors = async (req, res) => {
     }
 };
 
-
+const removeDirectorFromMovies = async (directorId) => {
+    try {        
+        const movies = await models.Movies.updateMany({director: directorId},{ $unset: { director: "" } });        
+        console.log(' removeDirectorFromMovies ', movies);        
+    } catch (error) {
+        console.log(' removeDirectorFromMovies error ', error);
+    }    
+};
 
 
 module.exports = {

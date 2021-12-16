@@ -261,6 +261,10 @@ const deleteActor = async (req, res) => {
         const response = await models.Actors.findByIdAndRemove(actorId);
     
         if (response) {
+            //antes de responder, quito el actor de los casts de peliculas
+            
+            removeActorFromMovies(actorId);
+
             return res.status(200).json(
                 {
                     data: response,
@@ -293,74 +297,62 @@ const deleteActor = async (req, res) => {
 };
 
 const getMoviesFromActor = async (req, res) => {
-    const actorId = req.params.id;
-        
-    //verifico que sea un ObjectId valido
-    if (!validaciones.isValidId(actorId)) {            
-        return res.status(400).json({
-            data: {
-                status: '400',
-                msg: `El valor ${actorId} no es un ID válido de MongoDB`,
-            },             
-            error: true,
-            });
-    }
+    try {
+        const actorId = req.params.id;
+        //verifico que sea un ObjectId valido
+        if (!validaciones.isValidId(actorId)) {            
+            return res.status(400).json({
+                data: {
+                    status: '400',
+                    msg: `El valor ${actorId} no es un ID válido de MongoDB`,
+                },             
+                error: true,
+                });
+        }
 
-    const response = await models.Actors.findById(actorId);
-    if (!response) {
-        return res.status(404).json(
+        const response = await models.Actors.findById(actorId);
+        if (!response) {
+            return res.status(404).json(
+                {
+                    data: {
+                        status: '404',
+                        msg: "El actor no existe",
+                    },                 
+                    error: true,                
+                }
+            );
+        }
+        const moviesFromActor = await models.Movies.find( { cast: actorId } );
+        if (moviesFromActor.length === 0) {
+            return res.status(404).json(
+                {
+                    data: {
+                        status: '404',
+                        msg: "No hay peliculas para este actor",
+                    },                
+                    error: true,                
+                }
+            );
+        } else {
+            return res.status(200).json(
+                {
+                    data: moviesFromActor,
+                    error: false,                
+                }
+            );
+        }
+    } catch (error) {
+        return res.status(500).json(
             {
                 data: {
-                    status: '404',
-                    msg: "El actor no existe",
-                },                 
-                error: true,                
+                    status: '500',
+                    msg: error
+                },
+                error: true,
             }
-        );
+        ); 
     }
-
-    //buscar peliculas donde este el id del actor
-    const movies = await models.Movies.find();
-
-    if (movies.length === 0) {
-        return res.status(404).json(
-            {
-                data: {
-                    status: '404',
-                    msg: "No hay peliculas cargadas en la base de datos",
-                },                 
-                error: true,                
-            }
-        );
-    }
-
-    let moviesFromActor = [];
-    movies.forEach(movie => {
-        let esta = false;
-        movie.cast.forEach(actor => {
-            if (actor == actorId) esta = true;
-        });
-        if (esta) moviesFromActor.push(movie);   
-    });
-
-    if (moviesFromActor.length === 0) {
-        return res.status(404).json(
-            {
-                data: {
-                    status: '404',
-                    msg: "No hay peliculas para este actor",
-                },                
-                error: true,                
-            }
-        );
-    } else {
-        return res.status(200).json(
-            {
-                data: moviesFromActor,
-                error: false,                
-            }
-        );
-    }
+    
 };
 
 const getFavouritesActors = async (req, res) => {
@@ -404,17 +396,8 @@ const getSearchActors = async (req, res) => {
             );
         }
         const response = await models.Actors.find({
-            name: { $regex: searchText }            
-        });
-
-        /* const response = await models.Movies.find({
-            movieTitle: new RegExp('^'+searchText+'$', "i")}, (err, doc) => {
-            if (err) {
-                console.log(err);
-            } else {
-                console.log(doc);
-            }
-          }); */
+            $or: [ { name: { $regex: searchText } }, { lastname: { $regex: searchText } } ]
+        });        
         
         return res.status(200).json(
             {
@@ -434,6 +417,17 @@ const getSearchActors = async (req, res) => {
         ); 
     }
 };
+
+const removeActorFromMovies = async (actorId) => {
+    try {
+        //buscar peliculas donde este el id del actor        
+        const movies = await models.Movies.updateMany({ $pull: { cast: actorId } });
+        console.log(' removeActorFromMovies actorId ',actorId,' movies ',movies);        
+    } catch (error) {
+        console.log(' removeActorFromMovies error ',error);
+    }    
+};
+
 
 module.exports = {
     getActors,
