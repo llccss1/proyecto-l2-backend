@@ -76,7 +76,7 @@ const addActor = async (req, res) => {
     try {
 
         //validar que el body este cargado
-        if (!req.body) {
+        if (!Object.keys(req.body).length) {
             return res.status(400).json(
                 {
                     data: {
@@ -159,7 +159,7 @@ const updateActor = async (req, res) => {
         }
 
         //validar que el body este cargado
-        if (!req.body) {
+        if (!Object.keys(req.body).length) {
             return res.status(400).json(
                 {
                     data: {
