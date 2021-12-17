@@ -4,9 +4,27 @@ const validateUser = async (req, res) => {
     try {
         
         if (!Object.keys(req.body).length) {
-            return res.status(400).json(
+            return res.status(200).json(
                 {
-                    msg: "El body es requerido para validar el usuario",                    
+                    msg: "Ingrese usuario y contraseña",                    
+                    error: true,                    
+                }
+            );
+        }
+
+        if (!req.body.userName) {
+            return res.status(200).json(
+                {
+                    msg: "Ingrese usuario",                    
+                    error: true,                    
+                }
+            );
+        }
+
+        if (!req.body.password) {
+            return res.status(200).json(
+                {
+                    msg: "Ingrese contraseña",                    
                     error: true,                    
                 }
             );
@@ -21,14 +39,14 @@ const validateUser = async (req, res) => {
             if (userFind.password === password) {
                 return res.status(200).json(
                     {
-                        msg: `usuario ${user} logueado!!!`,                    
+                        msg: `Usuario ${user} logueado!!!`,                    
                         error: false,                    
                     }
                 );
             } else {
                 return res.status(200).json(
                     {
-                        msg: 'contraseña incorrecta',                    
+                        msg: 'Contraseña incorrecta',                    
                         error: true,                    
                     }
                 );
@@ -36,7 +54,7 @@ const validateUser = async (req, res) => {
         } else {
             return res.status(200).json(
                 {
-                    msg: `el usuario ${user} no existe`,                    
+                    msg: `El usuario (${user}) no existe`,                    
                     error: true,                    
                 }
             );        
