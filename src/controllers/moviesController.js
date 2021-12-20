@@ -5,6 +5,8 @@ const getMovies = async (req, res) => {
     try {
         const response = await models.Movies.find();
 
+        response.sort(orderByYear);
+
         return res.status(200).json(
             {
                 data: response,
@@ -325,6 +327,8 @@ const getFavouritesMovies = async (req, res) => {
         const response = await models.Movies.find({
             favourite: true,
         });
+
+        response.sort(orderByYear);
         
         return res.status(200).json(
             {
@@ -372,6 +376,8 @@ const getSearchMovies = async (req, res) => {
                 console.log(doc);
             }
           }); */
+
+        response.sort(orderByYear);
         
         return res.status(200).json(
             {
@@ -391,6 +397,17 @@ const getSearchMovies = async (req, res) => {
         ); 
     }
 };
+
+const orderByYear = (a, b) => {
+    if (a.yearOfRelease > b.yearOfRelease) {
+      return 1;
+    }
+    if (a.yearOfRelease < b.yearOfRelease) {
+      return -1;
+    }
+    // a must be equal to b
+    return 0;
+  };
 
 module.exports = {
     getMovies,

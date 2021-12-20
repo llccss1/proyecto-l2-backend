@@ -5,6 +5,8 @@ const getActors = async (req, res) => {
     try {
         const response = await models.Actors.find();
 
+        response.sort(orderByName);
+
         return res.status(200).json(
             {
                 data: response,
@@ -333,7 +335,8 @@ const getMoviesFromActor = async (req, res) => {
                     error: true,                
                 }
             );
-        } else {
+        } else {            
+            moviesFromActor.sort(orderByYear);
             return res.status(200).json(
                 {
                     data: moviesFromActor,
@@ -360,6 +363,8 @@ const getFavouritesActors = async (req, res) => {
         const response = await models.Actors.find({
             favourite: true,
         });
+
+        response.sort(orderByName);
         
         return res.status(200).json(
             {
@@ -398,7 +403,7 @@ const getSearchActors = async (req, res) => {
         const response = await models.Actors.find({
             $or: [ { name: { $regex: searchText } }, { lastname: { $regex: searchText } } ]
         });        
-        
+        response.sort(orderByName);
         return res.status(200).json(
             {
                 data: response,
@@ -427,6 +432,27 @@ const removeActorFromMovies = async (actorId) => {
         console.log(' removeActorFromMovies error ',error);
     }    
 };
+
+const orderByName = (a, b) => {
+    if (a.name > b.name) {
+      return 1;
+    }
+    if (a.name < b.name) {
+      return -1;
+    }
+    // a must be equal to b
+    return 0;
+  };
+const orderByYear = (a, b) => {
+    if (a.yearOfRelease > b.yearOfRelease) {
+      return 1;
+    }
+    if (a.yearOfRelease < b.yearOfRelease) {
+      return -1;
+    }
+    // a must be equal to b
+    return 0;
+  };
 
 
 module.exports = {
